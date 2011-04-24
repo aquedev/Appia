@@ -1,0 +1,10 @@
+﻿@{
+    Layout = "/folder/1column";
+}
+ 
+<h2>Inner content in a folder</h2>
+<p>The layout of this view is @Layout</p>
+<h3>@Model.Content</h3>
+<div style="border: solid 2px blue">
+  @RenderPartial("title")
+</div>
