@@ -5,6 +5,7 @@
     using Nancy.ViewEngines;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Bootstrapper : DefaultNancyBootstrapper
     {
@@ -25,6 +26,16 @@
             container.RegisterMultiple<IViewSourceProvider>(
                 new List<Type> { typeof(FileSystemViewSourceProvider) })
                 .AsSingleton();
+        }
+
+        protected override void RegisterViewEngines(TinyIoC.TinyIoCContainer container, IEnumerable<Type> viewEngineTypes)
+        {
+            this.container.RegisterMultiple<IViewEngine>(viewEngineTypes.Where(eng => eng != typeof(SuperSimpleViewEngine))).AsSingleton();
+        }
+
+        protected override Type DefaultViewFactory
+        {
+            get { return typeof(AppiaViewFactory); }
         }
     }
 }

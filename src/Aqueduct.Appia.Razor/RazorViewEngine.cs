@@ -54,6 +54,7 @@
             host.NamespaceImports.Add("System.Collections.Generic");
             host.NamespaceImports.Add("Microsoft.CSharp.RuntimeBinder");
             host.NamespaceImports.Add("Aqueduct.Appia.Core");
+            host.GeneratedClassContext.AllowTemplates = true;
             
             return new RazorTemplateEngine(host);
         }
@@ -134,7 +135,7 @@
         /// <remarks>The extensions should not have a leading dot in the name.</remarks>
         public IEnumerable<string> Extensions
         {
-            get { return new[] { "cshtml", "vbhtml" }; }
+            get { return new[] { "cshtml", "vbhtml", "html" }; }
         }
 
         /// <summary>
