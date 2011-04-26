@@ -54,7 +54,6 @@
             host.NamespaceImports.Add("System.Collections.Generic");
             host.NamespaceImports.Add("Microsoft.CSharp.RuntimeBinder");
             host.NamespaceImports.Add("Aqueduct.Appia.Core");
-            host.GeneratedClassContext.AllowTemplates = true;
             
             return new RazorTemplateEngine(host);
         }
