@@ -56,14 +56,6 @@
     <Reference Include="CommandLine">
       <HintPath>..\..\dependencies\CommandLine\CommandLine.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\dependencies\Nancy\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\dependencies\Nancy\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -87,6 +79,14 @@
     <ProjectReference Include="..\Aqueduct.Appia.Razor\Aqueduct.Appia.Razor.csproj">
       <Project>{2C6F51DF-015C-4DB6-B44C-0E5E4F25E2A9}</Project>
       <Name>Aqueduct.Appia.Razor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nancy.Hosting.Self\Nancy.Hosting.Self.csproj">
+      <Project>{AA7F66EB-EC2C-47DE-855F-30B3E6EF2134}</Project>
+      <Name>Nancy.Hosting.Self</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nancy\Nancy.csproj">
+      <Project>{34576216-0DCA-4B0F-A0DC-9075E75A676F}</Project>
+      <Name>Nancy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

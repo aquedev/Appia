@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{34576216-0DCA-4B0F-A0DC-9075E75A676F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nancy</RootNamespace>
+    <AssemblyName>Nancy</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Bootstrapper\AppDomainAssemblyTypeScanner.cs" />
+    <Compile Include="Bootstrapper\IApplicationPipelines.cs" />
+    <Compile Include="Cryptography\Base64Helpers.cs" />
+    <Compile Include="Cryptography\DefaultHmacProvider.cs" />
+    <Compile Include="Cryptography\HmacComparer.cs" />
+    <Compile Include="Cryptography\IHmacProvider.cs" />
+    <Compile Include="DefaultNancyContextFactory.cs" />
+    <Compile Include="DynamicDictionaryValue.cs" />
+    <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Bootstrapper\DefaultModuleKeyGenerator.cs" />
+    <Compile Include="Bootstrapper\IModuleKeyGenerator.cs" />
+    <Compile Include="Bootstrapper\INancyBootstrapper.cs" />
+    <Compile Include="Bootstrapper\ModuleRegistrationType.cs" />
+    <Compile Include="Bootstrapper\NancyBootstrapperBase.cs" />
+    <Compile Include="Bootstrapper\NancyBootstrapperLocator.cs" />
+    <Compile Include="Bootstrapper\TypeRegistration.cs" />
+    <Compile Include="Cookies\NancyCookie.cs" />
+    <Compile Include="Cookies\INancyCookie.cs" />
+    <Compile Include="DefaultNancyBootstrapper.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="FileSystemViewSourceProvider.cs" />
+    <Compile Include="FormatterExtensions.cs" />
+    <Compile Include="HeadResponse.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Bootstrapper\INancyBootStrapperPerRequestRegistration.cs" />
+    <Compile Include="Helpers\HttpEncoder.cs" />
+    <Compile Include="Helpers\HttpUtility.cs" />
+    <Compile Include="HttpFile.cs" />
+    <Compile Include="HttpMultipart.cs" />
+    <Compile Include="HttpMultipartBoundary.cs" />
+    <Compile Include="HttpMultipartBuffer.cs" />
+    <Compile Include="HttpStatusCode.cs" />
+    <Compile Include="IHideObjectMembers.cs" />
+    <Compile Include="INancyContextFactory.cs" />
+    <Compile Include="INancyModuleCatalog.cs" />
+    <Compile Include="IResponseFormatter.cs" />
+    <Compile Include="Json\JavaScriptConverter.cs" />
+    <Compile Include="Json\JavaScriptSerializer.cs" />
+    <Compile Include="Json\JavaScriptTypeResolver.cs" />
+    <Compile Include="Json\Json.cs" />
+    <Compile Include="Json\JsonDeserializer.cs" />
+    <Compile Include="Json\JsonSerializer.cs" />
+    <Compile Include="Helpers\ReflectionUtils.cs" />
+    <Compile Include="Json\ScriptIgnoreAttribute.cs" />
+    <Compile Include="Json\StringBuilderExtensions.cs" />
+    <Compile Include="MimeTypes.cs" />
+    <Compile Include="ModelBinding\BindingContext.cs" />
+    <Compile Include="ModelBinding\BindingDefaults.cs" />
+    <Compile Include="ModelBinding\DefaultBinder.cs" />
+    <Compile Include="ModelBinding\DefaultBodyDeserializers\JsonBodyDeserializer.cs" />
+    <Compile Include="ModelBinding\DefaultBodyDeserializers\XmlBodyDeserializer.cs" />
+    <Compile Include="ModelBinding\DefaultConverters\CollectionConverter.cs" />
+    <Compile Include="ModelBinding\DefaultConverters\FallbackConverter.cs" />
+    <Compile Include="ModelBinding\DefaultFieldNameConverter.cs" />
+    <Compile Include="ModelBinding\DynamicModelBinderAdapter.cs" />
+    <Compile Include="ModelBinding\IBodyDeserializer.cs" />
+    <Compile Include="ModelBinding\IBinder.cs" />
+    <Compile Include="ModelBinding\IFieldNameConverter.cs" />
+    <Compile Include="ModelBinding\IModelBinder.cs" />
+    <Compile Include="ModelBinding\IModelBinderLocator.cs" />
+    <Compile Include="ModelBinding\ITypeConverter.cs" />
+    <Compile Include="ModelBinding\DefaultModelBinderLocator.cs" />
+    <Compile Include="ModelBinding\ModelBindingException.cs" />
+    <Compile Include="ModelBinding\ModuleExtensions.cs" />
+    <Compile Include="NancyContext.cs" />
+    <Compile Include="AfterPipeline.cs" />
+    <Compile Include="BeforePipeline.cs" />
+    <Compile Include="DefaultResponseFormatter.cs" />
+    <Compile Include="IO\RequestStream.cs" />
+    <Compile Include="Responses\GenericFileResponse.cs" />
+    <Compile Include="Responses\JsonResponse.cs" />
+    <Compile Include="Responses\JsonSettings.cs" />
+    <Compile Include="Responses\RedirectResponse.cs" />
+    <Compile Include="Responses\XmlResponse.cs" />
+    <Compile Include="Routing\DefaultNancyModuleBuilder.cs" />
+    <Compile Include="Routing\DefaultRouteCacheProvider.cs" />
+    <Compile Include="Routing\DefaultRoutePatternMatcher.cs" />
+    <Compile Include="IRootPathProvider.cs" />
+    <Compile Include="Routing\INancyModuleBuilder.cs" />
+    <Compile Include="Routing\IRouteCache.cs" />
+    <Compile Include="Routing\IRouteCacheProvider.cs" />
+    <Compile Include="Routing\RouteCache.cs" />
+    <Compile Include="Routing\IRoutePatternMatcher.cs" />
+    <Compile Include="Routing\IRoutePatternMatchResult.cs" />
+    <Compile Include="Routing\MethodNotAllowedRoute.cs" />
+    <Compile Include="Routing\RouteDescription.cs" />
+    <Compile Include="Routing\RoutePatternMatchResult.cs" />
+    <Compile Include="Security\SecurityConventions.cs" />
+    <Compile Include="Security\ModuleSecurity.cs" />
+    <Compile Include="Session\CookieBasedSessions.cs" />
+    <Compile Include="Cryptography\DefaultEncryptionProvider.cs" />
+    <Compile Include="Session\DefaultSessionObjectFormatter.cs" />
+    <Compile Include="Cryptography\IEncryptionProvider.cs" />
+    <Compile Include="Session\IFormatterSelector.cs" />
+    <Compile Include="Session\ISession.cs" />
+    <Compile Include="Session\ISessionObjectFormatter.cs" />
+    <Compile Include="Session\NullSessionProvider.cs" />
+    <Compile Include="Session\Session.cs" />
+    <Compile Include="HttpMultiparSubStream.cs" />
+    <Compile Include="TinyIoc\TinyIoC.cs" />
+    <Compile Include="NancyModule.cs" />
+    <Compile Include="INancyEngine.cs" />
+    <Compile Include="Request.cs" />
+    <Compile Include="NancyEngine.cs" />
+    <Compile Include="Response.cs" />
+    <Compile Include="NotFoundResponse.cs" />
+    <Compile Include="Routing\IRouteResolver.cs" />
+    <Compile Include="Routing\NotFoundRoute.cs" />
+    <Compile Include="Routing\Route.cs" />
+    <Compile Include="DynamicDictionary.cs" />
+    <Compile Include="Routing\DefaultRouteResolver.cs" />
+    <Compile Include="ViewEngines\DefaultViewFactory.cs" />
+    <Compile Include="ViewEngines\IViewEngine.cs" />
+    <Compile Include="ViewEngines\IViewFactory.cs" />
+    <Compile Include="ViewEngines\IViewLocator.cs" />
+    <Compile Include="ViewEngines\IViewSourceProvider.cs" />
+    <Compile Include="ViewEngines\ResourceViewSourceProvider.cs" />
+    <Compile Include="ViewEngines\SuperSimpleViewEngine.cs" />
+    <Compile Include="ViewEngines\SuperSimpleViewEngineWrapper.cs" />
+    <Compile Include="ViewEngines\ViewLocationResult.cs" />
+    <Compile Include="ViewEngines\DefaultViewLocator.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

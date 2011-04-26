@@ -34,7 +34,7 @@ namespace Aqueduct.Appia.Core
 
             Get["/{path}", (ctx) => ctx.Request.Uri != "/"] = x =>
             {
-                return View[x.path];
+                return null;//return View[x.path];
             };
 
             
