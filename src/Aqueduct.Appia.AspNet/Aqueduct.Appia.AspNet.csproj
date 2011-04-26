@@ -57,7 +57,9 @@
     <Reference Include="System.Web.ApplicationServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="img\logo.png" />
     <Content Include="css\main.css" />
+    <Content Include="images\logo.png" />
     <Content Include="js\scripts.js" />
     <Content Include="models\contentpage.js" />
     <Content Include="models\tags.js" />
@@ -91,6 +93,9 @@
     <Content Include="layouts\global.cshtml" />
     <Content Include="partials\title.cshtml" />
     <Content Include="layouts\folder\1column.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pages\index.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
