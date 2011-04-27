@@ -1,0 +1,1 @@
+﻿Add current url to global model

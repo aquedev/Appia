@@ -1,0 +1,1 @@
+server.exe -a localhost -p 8888
