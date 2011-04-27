@@ -1,4 +1,5 @@
-﻿namespace Aqueduct.Appia.Razor
+﻿using System.Web.Razor.Generator;
+namespace Aqueduct.Appia.Razor
 {
     using System;
     using System.CodeDom.Compiler;
@@ -13,6 +14,16 @@
 
     public class RazorViewEngine : IViewEngine
     {
+        internal const string DefineSectionMethodName = "DefineSection";
+        internal const string WebDefaultNamespace = "ASP";
+        internal const string WriteToMethodName = "WriteTo";
+        internal const string WriteLiteralToMethodName = "WriteLiteralTo";
+        private const string DefaultNamespace = "RazorOutput";
+        private const string DefaultClassname = "RazorView";
+
+        internal static readonly string ViewBaseClass = typeof(ViewBase).FullName;
+        internal static readonly string TemplateTypeName = typeof(HelperResult).FullName;
+
         private readonly RazorTemplateEngine engine;
         private readonly CodeDomProvider _codeDomProvider;
         private readonly IViewLocator _locator;
@@ -44,9 +55,9 @@
             var host =
                 new RazorEngineHost(new CSharpRazorCodeLanguage())
                 {
-                    DefaultBaseClass = typeof(ViewBase).FullName,
-                    DefaultNamespace = "RazorOutput",
-                    DefaultClassName = "RazorView"
+                    DefaultBaseClass = ViewBaseClass,
+                    DefaultNamespace = DefaultNamespace,
+                    DefaultClassName = DefaultClassname
                 };
 
             host.NamespaceImports.Add("System");
@@ -54,6 +65,15 @@
             host.NamespaceImports.Add("System.Collections.Generic");
             host.NamespaceImports.Add("Microsoft.CSharp.RuntimeBinder");
             host.NamespaceImports.Add("Aqueduct.Appia.Core");
+
+            host.GeneratedClassContext = new GeneratedClassContext(GeneratedClassContext.DefaultExecuteMethodName,
+                                             GeneratedClassContext.DefaultWriteMethodName,
+                                             GeneratedClassContext.DefaultWriteLiteralMethodName,
+                                             WriteToMethodName,
+                                             WriteLiteralToMethodName,
+                                             TemplateTypeName,
+                                             DefineSectionMethodName
+                                             );
             
             return new RazorTemplateEngine(host);
         }
@@ -173,7 +193,7 @@
             view.Model = model ?? _modelProvider.GetModel(Path.GetFileNameWithoutExtension(viewLocationResult.Location));
 
             view.RenderPartialImpl = (partialViewName, partialModel)
-                => new HttpStringLiteral(ExecuteView(Conventions.PartialsPrefix + partialViewName, partialModel));
+                => new HtmlStringLiteral(ExecuteView(Conventions.PartialsPrefix + partialViewName, partialModel));
             view.Execute();
 
             if (string.IsNullOrEmpty(view.Layout))

@@ -51,8 +51,10 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Conventions.cs" />
     <Compile Include="FileSystemViewSourceProvider.cs" />
+    <Compile Include="HelperResult.cs" />
     <Compile Include="HttpStringLiteral.cs" />
     <Compile Include="IConfiguration.cs" />
+    <Compile Include="IHtmlString.cs" />
     <Compile Include="IModelProvider.cs" />
     <Compile Include="JsonHelpers.cs" />
     <Compile Include="ExpandoExtensions.cs" />

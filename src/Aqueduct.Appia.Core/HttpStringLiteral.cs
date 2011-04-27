@@ -2,13 +2,13 @@ using System;
 
 namespace Aqueduct.Appia.Core
 {
-    public sealed class HttpStringLiteral
+    public sealed class HtmlStringLiteral : IHtmlString
     {
         private readonly string _inner;
         /// <summary>
         /// Initializes a new instance of the HttpStringLiteral class.
         /// </summary>
-        public HttpStringLiteral(string inner)
+        public HtmlStringLiteral(string inner)
         {
             _inner = inner;
         }
@@ -17,8 +17,8 @@ namespace Aqueduct.Appia.Core
         {
             if (obj is String)
                 return _inner.Equals(obj);
-            if (obj is HttpStringLiteral)
-                return _inner.Equals(((HttpStringLiteral)obj)._inner);
+            if (obj is HtmlStringLiteral)
+                return _inner.Equals(((HtmlStringLiteral)obj)._inner);
 
             return _inner.Equals(obj);
         }
@@ -30,7 +30,13 @@ namespace Aqueduct.Appia.Core
 
         public override string ToString()
         {
-            return _inner.ToString();
+            return _inner;
         }
+
+        public string ToHtmlString()
+        {
+            return ToString();
+        }
+
     }
 }

@@ -3,49 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.IO;
 
 namespace Aqueduct.Appia.Core
 {
-    public class ViewBase
+    public abstract class ViewBaseRenderingBase
     {
-        private StringBuilder _contents = new StringBuilder();
-
+        protected StringBuilder _contents = new StringBuilder();
         public string Contents
         {
             get { return _contents.ToString(); }
         }
 
-        public string Path { get; set; }
-
-        public HttpStringLiteral RenderPartial(string viewName)
+        public Func<string, dynamic, HtmlStringLiteral> RenderPartialImpl = (str, model) =>
+        {
+            return new HtmlStringLiteral(String.Empty);
+        };
+        public HtmlStringLiteral RenderPartial(string viewName)
         {
             return RenderPartial(viewName, null);
         }
-
-        public HttpStringLiteral RenderPartial(string viewName, object model)
+        public HtmlStringLiteral RenderPartial(string viewName, string jsonModel)
+        {
+            return RenderPartialImpl(viewName, JsonHelpers.ParseJsonObject(jsonModel));
+        }
+        public HtmlStringLiteral RenderPartial(string viewName, object model)
         {
             return RenderPartialImpl(viewName, ExpandoHelper.AnonymousTypeToExpando(model));
         }
 
-        public HttpStringLiteral RenderPartial(string viewName, string jsonModel)
+        public virtual void Write(HelperResult content)
         {
-            return RenderPartialImpl(viewName, JsonHelpers.ParseJsonObject(jsonModel));
+            if (content != null)
+                WriteLiteral(content.ToHtmlString());
         }
-
-        public Func<string, dynamic, HttpStringLiteral> RenderPartialImpl = (str, model) => { return new HttpStringLiteral(String.Empty); };
-
-        public dynamic Global { get; set; }
-
-        public dynamic Model { get; set; }
-
-        public string Layout { get; set; }
-
-        public virtual void Execute() { }
 
         public virtual void Write(object value)
         {
-            if (value is HttpStringLiteral)
-                WriteLiteral(value);
+            if (value is IHtmlString)
+                WriteLiteral(((IHtmlString)value).ToHtmlString());
             else
                 WriteLiteral(HttpUtility.HtmlEncode(value));
         }
@@ -54,5 +50,42 @@ namespace Aqueduct.Appia.Core
         {
             _contents.Append(value);
         }
+
+        // This method is called by generated code and needs to stay in sync with the parser
+        public static void WriteTo(TextWriter writer, HelperResult content)
+        {
+            if (content != null)
+                content.WriteTo(writer);
+        }
+
+        // This method is called by generated code and needs to stay in sync with the parser
+        public static void WriteTo(TextWriter writer, object content)
+        {
+            writer.Write(HttpUtility.HtmlEncode(content));
+        }
+
+        // This method is called by generated code and needs to stay in sync with the parser
+        public static void WriteLiteralTo(TextWriter writer, object content)
+        {
+            writer.Write(content);
+        }
+
+        public void DefineSection(string name, Action action)
+        {
+            throw new NotImplementedException("Sections are not implemented yet");
+        }
+
+        public abstract void Execute();
+    }
+
+    public abstract class ViewBase : ViewBaseRenderingBase
+    {
+        public string Path { get; set; }
+
+        public dynamic Global { get; set; }
+
+        public dynamic Model { get; set; }
+
+        public string Layout { get; set; }
     }
 }
