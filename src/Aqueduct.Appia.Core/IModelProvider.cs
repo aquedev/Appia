@@ -7,4 +7,10 @@ namespace Aqueduct.Appia.Core
         dynamic GetGlobalModel();
         dynamic GetModel(string viewName);
     }
+
+    public interface IHelpersProvider
+    {
+        string GetGlobalHelpersContent();
+        string GetHelpersContent(string helperName);
+    }
 }

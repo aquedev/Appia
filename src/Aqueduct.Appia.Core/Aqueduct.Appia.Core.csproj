@@ -52,6 +52,7 @@
     <Compile Include="Conventions.cs" />
     <Compile Include="FileSystemViewSourceProvider.cs" />
     <Compile Include="HelperResult.cs" />
+    <Compile Include="HelpersProvider.cs" />
     <Compile Include="HttpStringLiteral.cs" />
     <Compile Include="IConfiguration.cs" />
     <Compile Include="IHtmlString.cs" />

@@ -90,12 +90,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="pages\contentpage.cshtml" />
+    <Content Include="pages\contentpage.html" />
     <Content Include="layouts\global.cshtml" />
     <Content Include="partials\title.cshtml" />
     <Content Include="layouts\folder\1column.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="helpers\GlobalHelpers.cshtml" />
     <None Include="pages\index.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

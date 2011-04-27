@@ -7,6 +7,7 @@ namespace Aqueduct.Appia.Core
 {
     public class Conventions
     {
+        public const string GlobalHelpersFile = "GlobalHelpers.cshtml";
         public const string GlobalModelFile = "Global.js";
         public const string ViewPrefixPattern = @"^#[a-z]+#";
         public const string LayoutsPrefix = "#lll#";

@@ -11,5 +11,6 @@ namespace Aqueduct.Appia.Core
         string LayoutsPath { get; }
         string ModelsPath { get; }
         string PartialsPath { get; }
+        string HelpersPath { get; }
     }
 }

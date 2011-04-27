@@ -29,6 +29,16 @@ namespace Aqueduct.Appia.Core
         {
             return ConfigurationManager.AppSettings[key] ?? defaultValue;
         }
-        
+
+
+        #region IConfiguration Members
+
+
+        public string HelpersPath
+        {
+            get { return GetSetting("HelpersPath", "helpers"); }
+        }
+
+        #endregion
     }
 }

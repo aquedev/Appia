@@ -11,10 +11,12 @@ namespace Aqueduct.Appia.Razor
     using Microsoft.CSharp;
     using Aqueduct.Appia.Core;
     using Nancy.ViewEngines;
+    using System.Text;
 
     public class RazorViewEngine : IViewEngine
     {
         internal const string DefineSectionMethodName = "DefineSection";
+
         internal const string WebDefaultNamespace = "ASP";
         internal const string WriteToMethodName = "WriteTo";
         internal const string WriteLiteralToMethodName = "WriteLiteralTo";
@@ -29,20 +31,25 @@ namespace Aqueduct.Appia.Razor
         private readonly IViewLocator _locator;
         private readonly IConfiguration _settings;
         private readonly IModelProvider _modelProvider;
-        
+        private readonly IHelpersProvider _helpersProvider;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RazorViewEngine"/> class.
         /// </summary>
-        public RazorViewEngine(IViewLocator locator, IConfiguration settings, IModelProvider modelProvider)
-            : this(GetRazorTemplateEngine(), new CSharpCodeProvider(), locator, settings, modelProvider)
+        public RazorViewEngine(IViewLocator locator,
+            IConfiguration settings,
+            IModelProvider modelProvider,
+            IHelpersProvider helpersProvider)
+            : this(GetRazorTemplateEngine(), new CSharpCodeProvider(), locator, settings, modelProvider, helpersProvider)
         {
         }
 
-        public RazorViewEngine(RazorTemplateEngine razorTemplateEngine, 
-            CodeDomProvider codeDomProvider, 
+        public RazorViewEngine(RazorTemplateEngine razorTemplateEngine,
+            CodeDomProvider codeDomProvider,
             IViewLocator locator,
-            IConfiguration settings, IModelProvider modelProvider)
+            IConfiguration settings, IModelProvider modelProvider, IHelpersProvider helpersProvider)
         {
+            _helpersProvider = helpersProvider;
             _modelProvider = modelProvider;
             _settings = settings;
             engine = razorTemplateEngine;
@@ -74,7 +81,7 @@ namespace Aqueduct.Appia.Razor
                                              TemplateTypeName,
                                              DefineSectionMethodName
                                              );
-            
+
             return new RazorTemplateEngine(host);
         }
 
@@ -165,6 +172,7 @@ namespace Aqueduct.Appia.Razor
         /// <returns>A delegate that can be invoked with the <see cref="Stream"/> that the view should be rendered to.</returns>
         public Action<Stream> RenderView(ViewLocationResult viewLocationResult, dynamic model)
         {
+
             return stream =>
             {
                 var writer =
@@ -187,8 +195,10 @@ namespace Aqueduct.Appia.Razor
 
         private string ExecuteView(ViewLocationResult viewLocationResult, dynamic model)
         {
+            //Preprocess the location result and inject the global helper
+            TextReader processedContentStream = InjectHelpersToView(viewLocationResult.Contents);
             var view =
-                    GetCompiledView<dynamic>(viewLocationResult.Contents);
+                    GetCompiledView<dynamic>(processedContentStream);
             view.Global = _modelProvider.GetGlobalModel();
             view.Model = model ?? _modelProvider.GetModel(Path.GetFileNameWithoutExtension(viewLocationResult.Location));
 
@@ -206,6 +216,18 @@ namespace Aqueduct.Appia.Razor
 
                 return layout.Replace("{{content}}", view.Contents);
             }
+        }
+
+        private TextReader InjectHelpersToView(TextReader contentsStream)
+        {
+            string globalHelperContent = _helpersProvider.GetGlobalHelpersContent();
+            if (string.IsNullOrEmpty(globalHelperContent) == false)
+            {
+                StringBuilder sb = new StringBuilder(globalHelperContent);
+                sb.Append(contentsStream.ReadToEnd());
+                return new StringReader(sb.ToString());
+            }
+            return contentsStream;
         }
     }
 }

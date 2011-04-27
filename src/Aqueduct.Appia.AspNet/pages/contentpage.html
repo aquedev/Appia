@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "2column";
 }
-
+@button(new { Color = "Red", Name = "Red button in page" })
 <h2>Inner content</h2>
 <p class="@(Global.Url == "contentpage" ? "true" : "false")">The layout of this view is @Layout</p>
 <h3>@Model.Content</h3>
