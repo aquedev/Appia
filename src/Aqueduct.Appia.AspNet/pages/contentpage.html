@@ -1,0 +1,10 @@
+﻿@{
+    Layout = "2column";
+}
+
+<h2>Inner content</h2>
+<p class="@(Global.Url == "contentpage" ? "true" : "false")">The layout of this view is @Layout</p>
+<h3>@Model.Content</h3>
+<div style="border: solid 2px blue">
+  @RenderPartial("title", new { Sth = "blah" })
+</div>  
