@@ -4,25 +4,39 @@
     using Nancy.Hosting.Self;
     using CommandLine;
     using System.Text;
+    using Aqueduct.Appia.Core;
+    using System.Reflection;
+    using System.IO;
 
     class Program
     {
         static void Main(params string[] args)
         {
+           Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), "Aqueduct.Appia.Razor.dll"));
+
             var options = new Options();
             ICommandLineParser parser = new CommandLineParser();
             parser.ParseArguments(args, options);
 
-            var nancyHost = new NancyHost(new Uri(String.Format("http://{0}:{1}/", options.Address, options.Port))
+            if (string.IsNullOrEmpty(options.ExportPath) == false)
+            {
+                new HtmlExporter(options.ExportPath, 
+                    new Configuration(), 
+                    new Aqueduct.Appia.Core.Bootstrapper()).Export();
+            }
+            else
+            {
+                var nancyHost = new NancyHost(new Uri(String.Format("http://{0}:{1}/", options.Address, options.Port))
                                             , new Aqueduct.Appia.Core.Bootstrapper());
-            nancyHost.Start();
+                nancyHost.Start();
 
-            Console.WriteLine(String.Format("Nancy now listening - navigate to http://{0}:{1}/. Press enter to stop", options.Address, options.Port));
-            Console.ReadKey();
+                Console.WriteLine(String.Format("Nancy now listening - navigate to http://{0}:{1}/. Press enter to stop", options.Address, options.Port));
+                Console.ReadKey();
 
-            nancyHost.Stop();
+                nancyHost.Stop();
 
-            Console.WriteLine("Stopped. Good bye!");
+                Console.WriteLine("Stopped. Good bye!");
+            }
         }
     }
 
@@ -30,6 +44,9 @@
     {
         [Option("a", "address", Required = false, HelpText = "The server's address. Default: localhost")]
         public string Address = "localhost";
+
+        [Option("e", "export", HelpText = "Specify where you want to export the site. When the export path is specified the server will not serve pages")]
+        public string ExportPath;
 
         [Option("p", "port", HelpText = "The server's port. Default: 8888")]
         public int Port = 8888;

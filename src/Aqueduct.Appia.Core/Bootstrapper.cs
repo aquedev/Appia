@@ -30,12 +30,17 @@
 
         protected override void RegisterViewEngines(TinyIoC.TinyIoCContainer container, IEnumerable<Type> viewEngineTypes)
         {
-            this.container.RegisterMultiple<IViewEngine>(viewEngineTypes.Where(eng => eng != typeof(SuperSimpleViewEngine))).AsSingleton();
+            if (viewEngineTypes.Count() > 1) //No need to register it because the default Container has already done it.
+            {
+                this.container.RegisterMultiple<IViewEngine>(viewEngineTypes).AsSingleton();
+            }
+            
         }
 
         protected override Type DefaultViewFactory
         {
             get { return typeof(AppiaViewFactory); }
         }
+
     }
 }
