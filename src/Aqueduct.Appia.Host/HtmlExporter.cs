@@ -15,40 +15,65 @@ namespace Aqueduct.Appia.Host
         private readonly string _exportPath;
         private readonly string _basePath;
 
-        public HtmlExporter(string exportPath, 
-            IConfiguration configuration, 
+        private List<string> _exludedFolders;
+        public HtmlExporter(string exportPath,
+            IConfiguration configuration,
             INancyBootstrapper bootStrapper)
         {
             _configuration = configuration;
             _exportPath = exportPath;
             bootStrapper.Initialise();
-            
+
             engine = bootStrapper.GetEngine();
             _basePath = Directory.GetCurrentDirectory();
+
+            _exludedFolders = new List<string> { 
+                            Path.Combine(_basePath, _configuration.LayoutsPath),
+                            Path.Combine(_basePath, _configuration.HelpersPath),
+                            Path.Combine(_basePath, _configuration.ModelsPath),
+                            Path.Combine(_basePath, _configuration.PagesPath),
+                            Path.Combine(_basePath, _configuration.PartialsPath)
+                        };
         }
+
+        public bool Verbose { get; set; }
 
         public void Export()
         {
             Log("Exporting {0} to {1}", _basePath, _exportPath);
             InitialiseExportPath();
+            ExportDynamicPages();
+            ExportStaticContent();
+
+        }
+
+        private void ExportDynamicPages()
+        {
             IEnumerable<string> pages = GetAllPages();
             Log("{0} pages found", pages.Count());
             foreach (string page in pages)
             {
                 Log("Processing page {0}", page);
 
-                var nancyRequest = ConvertPathToNancyRequest(page);
-                using (var nancyContext = engine.HandleRequest(nancyRequest))
+                try
                 {
-                    ConvertNancyResponseToResponse(nancyContext.Response, GetPageExportPath(page));
+                    var nancyRequest = ConvertPathToNancyRequest(page);
+                    using (var nancyContext = engine.HandleRequest(nancyRequest))
+                    {
+                        ConvertNancyResponseToResponse(nancyContext.Response, GetPageExportPath(page));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogError("Processing page {0}", ex, page);
                 }
             }
         }
-
         private void InitialiseExportPath()
         {
             Log("InitialisingExportPath");
             string exportPath = Path.Combine(_basePath, _exportPath);
+
             if (Directory.Exists(exportPath))
                 Directory.Delete(exportPath, true);
 
@@ -61,19 +86,11 @@ namespace Aqueduct.Appia.Host
         }
         private IEnumerable<string> GetAllPages()
         {
-
             string pagesPath = Path.Combine(_basePath, _configuration.PagesPath);
             if (Directory.Exists(pagesPath) == false)
                 throw new DirectoryNotFoundException(String.Format("Cannot find the pages folder. Make sure '{0}' exists under the current directory", _configuration.PagesPath));
             string[] pages = Directory.GetFiles(pagesPath);
             return pages;
-        }
-
-        private static Uri GetUrlAndPathComponents(Uri uri)
-        {
-            // ensures that for a given url only the
-            //  scheme://host:port/paths/somepath
-            return new Uri(uri.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped));
         }
 
         private Request ConvertPathToNancyRequest(string pagePath)
@@ -94,16 +111,69 @@ namespace Aqueduct.Appia.Host
                 nancyResponse.Contents.Invoke(output);
                 output.Flush();
                 output.Position = 0;
-                using(var reader = new StreamReader(output))
+                using (var reader = new StreamReader(output))
                 {
                     File.WriteAllText(filePath, reader.ReadToEnd());
                 }
             }
-            
+
         }
-        private static void Log(string message, params object[] args)
+
+        private void ExportStaticContent()
         {
-            Console.WriteLine(message, args);
+            string basePath = _basePath.TrimEnd('\\') + "\\";
+
+            var staticFiles = Directory.GetFiles(basePath, "*.*", SearchOption.AllDirectories);
+
+            foreach (string staticFile in staticFiles)
+            {
+
+                if (ShouldCopy(staticFile))
+                {
+                    Log("Copying file {0}", staticFile);
+                    CopyToExportFolder(staticFile);
+                }
+                else
+                    Log("Skipping file {0}", staticFile);
+                
+            }
+        }
+
+        private bool ShouldCopy(string filePath)
+        {
+            foreach (var excludedFolder in _exludedFolders)
+            {
+                if (filePath.StartsWith(excludedFolder, StringComparison.CurrentCultureIgnoreCase))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void CopyToExportFolder(string staticFile)
+        {
+            var destination = staticFile.Replace(_basePath, _exportPath);
+            try
+            {
+                Directory.CreateDirectory(destination.Substring(0, destination.LastIndexOf('\\')));
+                File.Copy(staticFile, destination);
+            }
+            catch (Exception ex)
+            {
+                LogError("Processing copying file {0} to {1}", ex, staticFile, destination);
+            }
+        }
+        private void Log(string message, params object[] args)
+        {
+            if (Verbose)
+                Console.WriteLine(message, args);
+        }
+
+        private void LogError(string message, Exception ex, params object[] args)
+        {
+            Console.WriteLine("Error: " + message, args);
+            if (Verbose)
+                Console.WriteLine("Message: {0}, StackTrace: {1}", ex.Message, ex.StackTrace);
         }
     }
 }
