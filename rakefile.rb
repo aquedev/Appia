@@ -68,36 +68,17 @@ task :host => [:compile] do
 	
 	Rake::Task["host_merge"].execute
 	
-	FileList['build/host/*.*'].exclude(/server\.(exe|pdb)/).each { |file| File.delete(file) }
+	FileList['build/host/*.*'].exclude(/appia\.(exe|pdb)/).each { |file| File.delete(file) }
 	
 	#Create the start.bat file
-	batch = File.open( "build/host/start.bat", "w" )
-	batch << "server.exe -a localhost -p 8888"
-	batch.close
+	File.open( "build/host/start.bat", "w" ) do |file|
+		file << "appia.exe -a localhost -p 8888"
+	end
 end
 
 desc "Merges the standalone assemblies to a single dll"
 exec :host_merge do |cmd|
     cmd.command = 'tools\ilmerge\ilmerge.exe'
-    cmd.parameters = '/out:build\host\server.exe build\host\Aqueduct.Appia.Host.exe ' + FileList['build/host/*.dll'].join(' ') + ' /targetplatform:v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319'
+    cmd.parameters = '/out:build\host\appia.exe build\host\Aqueduct.Appia.Host.exe ' + FileList['build/host/*.dll'].join(' ') + ' /targetplatform:v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319'
     puts 'merged.'
 end
-
-desc "Zips up the built binaries for easy distribution"
-zip :package => [:publish] do |zip|
-	Dir.mkdir("#{OUTPUT}/packages")
-
-	zip.directories_to_zip "#{OUTPUT}/binaries"
-	zip.output_file = "NancyFx-#{VERSION}.zip"
-	zip.output_path = "#{OUTPUT}/packages"
-end
-
-
-
-#TODO:
-#-----
-#  1. Copy
-#  2. Documentation (docu?) - Started, seems to have trouble with .NET 4 assembilies. Needs investigation.
-#  3. Test coverage report (NCover?)
-#  4. NuGet task (waiting for albacore pull)
-#  5. Git info into shared assemby info (see fubumvc sample, also psake sample in mefcontrib)

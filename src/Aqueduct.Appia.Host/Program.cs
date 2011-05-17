@@ -26,6 +26,7 @@
                                                     new Configuration(),
                                                     new Aqueduct.Appia.Core.Bootstrapper()) 
                                                     { Verbose = options.Verbose };
+                exporter.Initialise();
                 exporter.Export();
             }
             else

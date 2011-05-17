@@ -16,6 +16,8 @@ namespace Aqueduct.Appia.Host
         private readonly string _basePath;
 
         private List<string> _exludedFolders;
+
+        private readonly string[] _exludedExtensions = { ".dll", ".exe", ".bat", ".pdb", ".config" };
         public HtmlExporter(string exportPath,
             IConfiguration configuration,
             INancyBootstrapper bootStrapper)
@@ -37,7 +39,8 @@ namespace Aqueduct.Appia.Host
                             Path.Combine(_basePath, _configuration.HelpersPath),
                             Path.Combine(_basePath, _configuration.ModelsPath),
                             Path.Combine(_basePath, _configuration.PagesPath),
-                            Path.Combine(_basePath, _configuration.PartialsPath)
+                            Path.Combine(_basePath, _configuration.PartialsPath),
+                            Path.Combine(_basePath, _exportPath)
                         };
 
             InitialiseExportPath();
@@ -159,7 +162,8 @@ namespace Aqueduct.Appia.Host
                     return false;
             }
 
-            return true;
+            var extension = Path.GetExtension(filePath);
+            return _exludedExtensions.Contains(extension.ToLower()) == false;
         }
 
         private void CopyToExportFolder(string staticFile)
