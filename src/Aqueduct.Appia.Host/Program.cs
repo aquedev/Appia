@@ -12,7 +12,9 @@
     {
         static void Main(params string[] args)
         {
-           Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), "Aqueduct.Appia.Razor.dll"));
+#if DEBUG
+            Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), "Aqueduct.Appia.Razor.dll"));
+#endif
 
             var options = new Options();
             ICommandLineParser parser = new CommandLineParser();
@@ -20,9 +22,11 @@
 
             if (string.IsNullOrEmpty(options.ExportPath) == false)
             {
-                new HtmlExporter(options.ExportPath, 
-                    new Configuration(), 
-                    new Aqueduct.Appia.Core.Bootstrapper()).Export();
+                var exporter = new HtmlExporter(options.ExportPath,
+                                                    new Configuration(),
+                                                    new Aqueduct.Appia.Core.Bootstrapper()) 
+                                                    { Verbose = options.Verbose };
+                exporter.Export();
             }
             else
             {
@@ -42,6 +46,9 @@
 
     public class Options
     {
+        [Option("v", null, HelpText = "Verbose gives you more debug information. Default: false")]
+        public bool Verbose = false;
+
         [Option("a", "address", Required = false, HelpText = "The server's address. Default: localhost")]
         public string Address = "localhost";
 

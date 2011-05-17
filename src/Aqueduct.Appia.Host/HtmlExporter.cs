@@ -11,7 +11,7 @@ namespace Aqueduct.Appia.Host
     public class HtmlExporter
     {
         private readonly IConfiguration _configuration;
-        private readonly INancyEngine engine;
+        private readonly INancyBootstrapper _bootStrapper;
         private readonly string _exportPath;
         private readonly string _basePath;
 
@@ -22,10 +22,15 @@ namespace Aqueduct.Appia.Host
         {
             _configuration = configuration;
             _exportPath = exportPath;
-            bootStrapper.Initialise();
-
-            engine = bootStrapper.GetEngine();
             _basePath = Directory.GetCurrentDirectory();
+            _bootStrapper = bootStrapper;
+        }
+
+        public void Initialise()
+        {
+            _bootStrapper.Initialise();
+
+            
 
             _exludedFolders = new List<string> { 
                             Path.Combine(_basePath, _configuration.LayoutsPath),
@@ -34,6 +39,8 @@ namespace Aqueduct.Appia.Host
                             Path.Combine(_basePath, _configuration.PagesPath),
                             Path.Combine(_basePath, _configuration.PartialsPath)
                         };
+
+            InitialiseExportPath();
         }
 
         public bool Verbose { get; set; }
@@ -41,7 +48,6 @@ namespace Aqueduct.Appia.Host
         public void Export()
         {
             Log("Exporting {0} to {1}", _basePath, _exportPath);
-            InitialiseExportPath();
             ExportDynamicPages();
             ExportStaticContent();
 
@@ -51,6 +57,8 @@ namespace Aqueduct.Appia.Host
         {
             IEnumerable<string> pages = GetAllPages();
             Log("{0} pages found", pages.Count());
+
+            var engine = _bootStrapper.GetEngine();
             foreach (string page in pages)
             {
                 Log("Processing page {0}", page);
@@ -95,9 +103,13 @@ namespace Aqueduct.Appia.Host
 
         private Request ConvertPathToNancyRequest(string pagePath)
         {
-            string relativeUrl = pagePath.Replace(_basePath, "").Replace(@"\", @"/").TrimStart('/');
+            //the result will be pages/test.cshtml
+            string basePath = Path.Combine(_basePath, _configuration.PagesPath);
+            string relativeUrl = pagePath.Replace(basePath, "").Replace(@"\", @"/").TrimStart('/');
+
             if (relativeUrl.LastIndexOf('.') > 0)
                 relativeUrl = relativeUrl.Substring(0, relativeUrl.LastIndexOf('.'));
+
             return new Request(
                 "GET",
                 string.Concat("/", relativeUrl),

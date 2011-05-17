@@ -67,7 +67,7 @@ namespace Aqueduct.Appia.Host.Specs
 #line 7
 this.ScenarioSetup(scenarioInfo);
 #line 8
- testRunner.Given("I have a export path");
+ testRunner.Given("a new HtmlExporter");
 #line 9
  testRunner.When("I initialise the exporter");
 #line 10
@@ -86,32 +86,13 @@ this.ScenarioSetup(scenarioInfo);
 #line 13
 this.ScenarioSetup(scenarioInfo);
 #line 14
- testRunner.Given("I have an export folder");
+ testRunner.Given("a new HtmlExporter");
 #line 15
- testRunner.And("I have an export path pointing to the same export folder");
+ testRunner.And("I have an export folder already containing 2 files");
 #line 16
  testRunner.When("I initialise the exporter");
 #line 17
  testRunner.Then("a new empty export folder is created in place of the old one");
-#line hidden
-            testRunner.CollectScenarioErrors();
-        }
-        
-        [Xunit.FactAttribute()]
-        [Xunit.TraitAttribute("FeatureTitle", "Export as html")]
-        [Xunit.TraitAttribute("Description", "Export pages")]
-        public virtual void ExportPages()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Export pages", new string[] {
-                        "export"});
-#line 20
-this.ScenarioSetup(scenarioInfo);
-#line 21
- testRunner.Given("I have page.cshtml in the pages folder");
-#line 22
- testRunner.When("I export the site");
-#line 23
- testRunner.Then("I have page.html in the export folder");
 #line hidden
             testRunner.CollectScenarioErrors();
         }
@@ -123,13 +104,15 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Export all pages", new string[] {
                         "export"});
-#line 26
+#line 20
 this.ScenarioSetup(scenarioInfo);
-#line 27
- testRunner.Given("I have 4 pages");
-#line 28
+#line 21
+ testRunner.Given("a new HtmlExporter");
+#line 22
+ testRunner.And("I have 4 cshtml files in the pages folder");
+#line 23
  testRunner.When("I export");
-#line 29
+#line 24
  testRunner.Then("I have 4 html files in the export directory");
 #line hidden
             testRunner.CollectScenarioErrors();
@@ -142,19 +125,21 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Export layouts", new string[] {
                         "export"});
-#line 32
+#line 27
 this.ScenarioSetup(scenarioInfo);
-#line 33
- testRunner.Given("I have page \"page_with_layout.cshtml\"");
-#line 34
+#line 28
+ testRunner.Given("a new HtmlExporter");
+#line 29
+ testRunner.And("I have page \"page_with_layout.cshtml\"");
+#line 30
  testRunner.And("it uses layout \"layout.cshtml\"");
-#line 35
+#line 31
  testRunner.When("I export");
-#line 36
+#line 32
  testRunner.Then("I have html page \"page_with_layout.html\"");
-#line 37
+#line 33
  testRunner.And("\"page_with_layout.html\" contains html content from layout \"layout.cshtml\"");
-#line 38
+#line 34
  testRunner.And("\"page_with_layout.html\" contains html content from page \"page_with_layout.cshtml\"" +
                     "");
 #line hidden
@@ -168,19 +153,19 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Export partials", new string[] {
                         "export"});
-#line 41
+#line 37
 this.ScenarioSetup(scenarioInfo);
-#line 42
- testRunner.Given("I have page \"page_with_partial.cshtml\"");
-#line 43
+#line 38
+ testRunner.Given("a new HtmlExporter");
+#line 39
+ testRunner.And("I have page \"page_with_partial.cshtml\"");
+#line 40
  testRunner.And("it uses partial \"partial.cshtml\"");
-#line 44
+#line 41
  testRunner.When("I export");
-#line 45
- testRunner.Then("I have html page \"page_with_partial.html\"");
-#line 46
- testRunner.And("\"page_with_partial.html\" contains html content from partial \"partial.cshtml\"");
-#line 47
+#line 42
+ testRunner.Then("\"page_with_partial.html\" contains html content from partial \"partial.cshtml\"");
+#line 43
  testRunner.And("\"page_with_partial.html\" contains html content from page \"page_with_partial.cshtm" +
                     "l\"");
 #line hidden
@@ -194,17 +179,19 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Copy static files", new string[] {
                         "export"});
-#line 51
+#line 47
 this.ScenarioSetup(scenarioInfo);
-#line 52
- testRunner.Given("I have css folder with 3 files");
-#line 53
+#line 48
+ testRunner.Given("a new HtmlExporter");
+#line 49
+ testRunner.And("I have css folder with 3 files");
+#line 50
  testRunner.And("I have js folder with 3 files");
-#line 54
+#line 51
  testRunner.When("I export");
-#line 55
+#line 52
  testRunner.Then("I have css folder with 3 files in the export folder");
-#line 56
+#line 53
  testRunner.And("I have js folder with 3 files in the export folder");
 #line hidden
             testRunner.CollectScenarioErrors();
@@ -217,13 +204,15 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Copy static file from root", new string[] {
                         "export"});
-#line 59
+#line 56
 this.ScenarioSetup(scenarioInfo);
-#line 60
- testRunner.Given("I have static file \"static.txt\"");
-#line 61
+#line 57
+ testRunner.Given("a new HtmlExporter");
+#line 58
+ testRunner.And("I have static file \"static.txt\"");
+#line 59
  testRunner.When("I export");
-#line 62
+#line 60
  testRunner.Then("I have file \"static.txt\" in the export folder");
 #line hidden
             testRunner.CollectScenarioErrors();

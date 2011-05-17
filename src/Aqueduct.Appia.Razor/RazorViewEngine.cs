@@ -213,7 +213,7 @@ namespace Aqueduct.Appia.Razor
             else
             {
                 string layout = ExecuteView(String.Format("{0}{1}", Conventions.LayoutsPrefix, view.Layout), model);
-
+                
                 return layout.Replace("{{content}}", view.Contents);
             }
         }
