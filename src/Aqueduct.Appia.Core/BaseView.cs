@@ -40,10 +40,7 @@ namespace Aqueduct.Appia.Core
 
         public virtual void Write(object value)
         {
-            if (value is IHtmlString)
-                WriteLiteral(((IHtmlString)value).ToHtmlString());
-            else
-                WriteLiteral(HttpUtility.HtmlEncode(value));
+            WriteLiteral(value);
         }
 
         public virtual void WriteLiteral(object value)
