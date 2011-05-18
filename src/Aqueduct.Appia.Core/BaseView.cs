@@ -58,7 +58,7 @@ namespace Aqueduct.Appia.Core
         // This method is called by generated code and needs to stay in sync with the parser
         public static void WriteTo(TextWriter writer, object content)
         {
-            writer.Write(HttpUtility.HtmlEncode(content));
+            writer.Write(content);
         }
 
         // This method is called by generated code and needs to stay in sync with the parser
@@ -70,6 +70,14 @@ namespace Aqueduct.Appia.Core
         public void DefineSection(string name, Action action)
         {
             throw new NotImplementedException("Sections are not implemented yet");
+        }
+
+        public string Encode(object value)
+        {
+            if (value == null)
+                return String.Empty;
+
+            return HttpUtility.HtmlEncode(value);
         }
 
         public abstract void Execute();
