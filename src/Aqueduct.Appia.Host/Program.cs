@@ -7,6 +7,7 @@
     using Aqueduct.Appia.Core;
     using System.Reflection;
     using System.IO;
+    using System.Net;
 
     class Program
     {
@@ -31,8 +32,8 @@
             }
             else
             {
-                var nancyHost = new NancyHost(new Uri(String.Format("http://{0}:{1}/", options.Address, options.Port))
-                                            , new Aqueduct.Appia.Core.Bootstrapper());
+                var ip = options.Address == "*" ? IPAddress.Any : IPAddress.Parse(options.Address);
+                var nancyHost = new NancyHost(ip, options.Port, new Aqueduct.Appia.Core.Bootstrapper());
                 nancyHost.Start();
 
                 Console.WriteLine(String.Format("Nancy now listening - navigate to http://{0}:{1}/. Press enter to stop", options.Address, options.Port));

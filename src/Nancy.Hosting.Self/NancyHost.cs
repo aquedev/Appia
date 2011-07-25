@@ -10,6 +10,10 @@
     using Nancy.Bootstrapper;
     using Nancy.Cookies;
     using Nancy.Extensions;
+    using HttpListener = HttpServer.HttpListener;
+using HttpServer;
+    using HttpServer.Headers;
+    using HttpServer.Messages;
 
     /// <summary>
     /// Allows to host Nancy server inside any application - console or windows service.
@@ -27,28 +31,23 @@
         private Thread thread;
         private bool shouldContinue;
 
-        public NancyHost(Uri baseUri)
-            : this(baseUri, NancyBootstrapperLocator.Bootstrapper)
+        public NancyHost(IPAddress address, int port)
+            : this(address, port, NancyBootstrapperLocator.Bootstrapper)
         {
         }
 
-        public NancyHost(Uri baseUri, INancyBootstrapper bootStrapper)
+        public NancyHost(IPAddress address, int port, INancyBootstrapper bootStrapper)
         {
-            this.baseUri = baseUri;
-            listener = new HttpListener();
-            listener.Prefixes.Add(baseUri.ToString());
-
+            HttpListener listener = HttpListener.Create(address, port);
             bootStrapper.Initialise();
             engine = bootStrapper.GetEngine();
+            baseUri = new Uri(String.Format("http://{0}:{1}/", address, port));
         }
 
         public void Start()
         {
             shouldContinue = true;
-
-            listener.Start();
-            thread = new Thread(Listen);
-            thread.Start();
+            listener.Start(5);
         }
 
         public void Stop()
@@ -57,66 +56,69 @@
             listener.Stop();
         }
 
-        private void Listen()
+        private void OnRequest(object sender, RequestEventArgs e)
         {
-            while (shouldContinue)
+            e.Response.Connection.Type = ConnectionType.Close;
+            var nancyRequest = ConvertRequestToNancyRequest(e.Request);
+            using (var nancyContext = engine.HandleRequest(nancyRequest))
             {
-                HttpListenerContext requestContext;
-                try
-                {
-                    requestContext = listener.GetContext();
-                }
-                catch (HttpListenerException)
-                {
-                    // this will be thrown when listener is closed while waiting for a request
-                    return;
-                }
-                var nancyRequest = ConvertRequestToNancyRequest(requestContext.Request);
-                using (var nancyContext = engine.HandleRequest(nancyRequest))
-                {
-                    ConvertNancyResponseToResponse(nancyContext.Response, requestContext.Response);
-                }
+                ConvertNancyResponseToResponse(nancyContext.Response, e.Response);
             }
         }
 
-        private static Uri GetUrlAndPathComponents(Uri uri) 
+        private Uri GetUrlAndPathComponents(Uri uri) 
         {
             // ensures that for a given url only the
             //  scheme://host:port/paths/somepath
             return new Uri(uri.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped));
         }
 
-        private Request ConvertRequestToNancyRequest(HttpListenerRequest request)
+        private Request ConvertRequestToNancyRequest(IRequest request)
         {
             var relativeUrl = 
-                GetUrlAndPathComponents(baseUri).MakeRelativeUri(GetUrlAndPathComponents(request.Url));
+                GetUrlAndPathComponents(baseUri).MakeRelativeUri(GetUrlAndPathComponents(request.Uri));
 
             var expectedRequestLength =
-                GetExpectedRequestLength(request.Headers.ToDictionary());
+                GetExpectedRequestLength(request.Headers);
 
             return new Request(
-                request.HttpMethod,
+                request.Method,
                 string.Concat("/", relativeUrl),
-                request.Headers.ToDictionary(),
-                RequestStream.FromStream(request.InputStream, expectedRequestLength, true),
-                request.Url.Scheme,
-                request.Url.Query);
+                ConvertToNancyHeaders(request.Headers),
+                RequestStream.FromStream(request.Body, expectedRequestLength, true),
+                request.Uri.Scheme,
+                request.Uri.Query);
         }
 
-        private static long GetExpectedRequestLength(IDictionary<string, IEnumerable<string>> incomingHeaders)
+        private IDictionary<string, IEnumerable<string>> ConvertToNancyHeaders(IHeaderCollection headers)
+        {
+            Dictionary<string, IEnumerable<string>> dict = new Dictionary<string, IEnumerable<string>>();
+            foreach (var header in headers)
+            {
+                if (dict.ContainsKey(header.Name))
+                    ((List<string>)dict[header.Name]).Add(header.HeaderValue);
+                else
+                    dict.Add(header.Name, new List<string> { header.HeaderValue });
+            }
+            return dict;
+        }
+
+        private long GetExpectedRequestLength(IHeaderCollection incomingHeaders)
         {
             if (incomingHeaders == null)
             {
                 return 0;
             }
 
-            if (!incomingHeaders.ContainsKey("Content-Length"))
+            var headersDict = incomingHeaders.ToDictionary(x => x.Name);
+
+            if (!headersDict.ContainsKey("Content-Length"))
             {
                 return 0;
             }
 
             var headerValue =
-                incomingHeaders["Content-Length"].SingleOrDefault();
+                headersDict["Content-Length"];
 
             if (headerValue == null)
             {
@@ -124,7 +126,7 @@
             }
 
             long contentLength;
-            if (!long.TryParse(headerValue, NumberStyles.Any, CultureInfo.InvariantCulture, out contentLength))
+            if (!long.TryParse(headerValue.HeaderValue, NumberStyles.Any, CultureInfo.InvariantCulture, out contentLength))
             {
                 return 0;
             }
@@ -132,11 +134,11 @@
             return contentLength;
         }
 
-        private static void ConvertNancyResponseToResponse(Response nancyResponse, HttpListenerResponse response)
+        private void ConvertNancyResponseToResponse(Response nancyResponse, IResponse response)
         {
             foreach (var header in nancyResponse.Headers)
             {
-                response.AddHeader(header.Key, header.Value);
+                response.Add(new StringHeader(header.Key, header.Value));
             }
 
             foreach (var nancyCookie in nancyResponse.Cookies)
@@ -144,24 +146,25 @@
                 response.Cookies.Add(ConvertCookie(nancyCookie));
             }
 
-            response.ContentType = nancyResponse.ContentType;
-            response.StatusCode = (int)nancyResponse.StatusCode;
+            response.ContentType = new ContentTypeHeader(nancyResponse.ContentType);
+            response.Status = (HttpStatusCode)nancyResponse.StatusCode;
 
-            using (var output = response.OutputStream)
+            using (var output = response.Body)
             {
                 nancyResponse.Contents.Invoke(output);
             }
         }
 
-        private static Cookie ConvertCookie(INancyCookie nancyCookie)
+        private ResponseCookie ConvertCookie(INancyCookie nancyCookie)
         {
-            var cookie = 
-                new Cookie(nancyCookie.Name, nancyCookie.Value, nancyCookie.Path, nancyCookie.Domain);
-
+            DateTime expires = DateTime.Now.AddDays(1);
             if (nancyCookie.Expires.HasValue)
             {
-                cookie.Expires = nancyCookie.Expires.Value;
+                expires = nancyCookie.Expires.Value;
             }
+
+            var cookie = 
+                new ResponseCookie(nancyCookie.Name, nancyCookie.Value, expires, nancyCookie.Path, nancyCookie.Domain);
 
             return cookie;
         }

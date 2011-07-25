@@ -61,7 +61,6 @@
     <Compile Include="ExpandoExtensions.cs" />
     <Compile Include="MainModule.cs" />
     <Compile Include="ModelProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppiaViewFactory.cs" />
   </ItemGroup>
   <ItemGroup>

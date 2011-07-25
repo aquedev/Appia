@@ -56,8 +56,16 @@
     <Reference Include="CommandLine">
       <HintPath>..\..\dependencies\CommandLine\CommandLine.dll</HintPath>
     </Reference>
+    <Reference Include="HttpServer">
+      <HintPath>..\..\dependencies\HttpServer\HttpServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\dependencies\razor\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,7 +78,6 @@
     </Compile>
     <Compile Include="HtmlExporter.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aqueduct.Appia.Core\Aqueduct.Appia.Core.csproj">
