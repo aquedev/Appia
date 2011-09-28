@@ -83,7 +83,7 @@ namespace Aqueduct.Appia.Host
         private void InitialiseExportPath()
         {
             Log("InitialisingExportPath");
-            string exportPath = Path.Combine(_basePath, _exportPath);
+            string exportPath = Path.IsPathRooted(_exportPath) ? _exportPath : Path.Combine(_basePath, _exportPath);
 
             if (Directory.Exists(exportPath))
                 Directory.Delete(exportPath, true);
@@ -99,7 +99,7 @@ namespace Aqueduct.Appia.Host
         {
             string pagesPath = Path.Combine(_basePath, _configuration.PagesPath);
             if (Directory.Exists(pagesPath) == false)
-                throw new DirectoryNotFoundException(String.Format("Cannot find the pages folder. Make sure '{0}' exists under the current directory", _configuration.PagesPath));
+                throw new DirectoryNotFoundException(String.Format("Cannot find the pages folder. Make sure '{0}' exists under the current directory '{1}'", _configuration.PagesPath, Directory.GetCurrentDirectory()));
             string[] pages = Directory.GetFiles(pagesPath);
             return pages;
         }
