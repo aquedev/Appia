@@ -197,8 +197,18 @@ namespace Aqueduct.Appia.Razor
         {
             //Preprocess the location result and inject the global helper
             TextReader processedContentStream = InjectHelpersToView(viewLocationResult.Contents);
-            var view =
-                    GetCompiledView<dynamic>(processedContentStream);
+
+            var cache = System.Runtime.Caching.MemoryCache.Default;
+            ViewBase view = (ViewBase)cache.Get(viewLocationResult.Location);
+
+            if( view == null)
+            {
+                view = GetCompiledView<dynamic>(processedContentStream);
+                //v
+                //cache.Add(new System.Runtime.Caching.CacheItem(viewLocationResult, view), 
+            }
+            
+                    
             view.Global = _modelProvider.GetGlobalModel();
             view.Model = model ?? _modelProvider.GetModel(Path.GetFileNameWithoutExtension(viewLocationResult.Location));
 
