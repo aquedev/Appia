@@ -10,9 +10,11 @@ namespace Aqueduct.Appia.Core
     public abstract class ViewBaseRenderingBase
     {
         protected StringBuilder _contents = new StringBuilder();
-        public string Contents
+        public string GetContents()
         {
-            get { return _contents.ToString(); }
+            string result = _contents.ToString();
+            _contents.Clear();
+            return result;
         }
 
         public Func<string, dynamic, HtmlStringLiteral> RenderPartialImpl = (str, model) =>

@@ -12,6 +12,7 @@ namespace Aqueduct.Appia.Razor
     using Aqueduct.Appia.Core;
     using Nancy.ViewEngines;
     using System.Text;
+    using System.Runtime.Caching;
 
     public class RazorViewEngine : IViewEngine
     {
@@ -204,11 +205,11 @@ namespace Aqueduct.Appia.Razor
             if( view == null)
             {
                 view = GetCompiledView<dynamic>(processedContentStream);
-                //v
-                //cache.Add(new System.Runtime.Caching.CacheItem(viewLocationResult, view), 
+                var cachePolicy = new CacheItemPolicy();
+                cachePolicy.ChangeMonitors.Add(new HostFileChangeMonitor(new List<string> { viewLocationResult.Location }));
+                cache.Add(new System.Runtime.Caching.CacheItem(viewLocationResult.Location, view), cachePolicy);
             }
-            
-                    
+                                
             view.Global = _modelProvider.GetGlobalModel();
             view.Model = model ?? _modelProvider.GetModel(Path.GetFileNameWithoutExtension(viewLocationResult.Location));
 
@@ -218,13 +219,13 @@ namespace Aqueduct.Appia.Razor
 
             if (string.IsNullOrEmpty(view.Layout))
             {
-                return view.Contents;
+                return view.GetContents();
             }
             else
             {
                 string layout = ExecuteView(String.Format("{0}{1}", Conventions.LayoutsPrefix, view.Layout), model);
-                
-                return layout.Replace("{{content}}", view.Contents);
+
+                return layout.Replace("{{content}}", view.GetContents());
             }
         }
 
