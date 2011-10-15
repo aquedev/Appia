@@ -29,7 +29,7 @@ namespace Aqueduct.Appia.Core
         }
         public HtmlStringLiteral RenderPartial(string viewName, object model)
         {
-            return RenderPartialImpl(viewName, ExpandoHelper.AnonymousTypeToExpando(model));
+            return RenderPartialImpl(viewName, model);
         }
 
         public virtual void Write(HelperResult content)
