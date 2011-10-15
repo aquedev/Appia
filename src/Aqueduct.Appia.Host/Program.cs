@@ -52,7 +52,7 @@
         public bool Verbose = false;
 
         [Option("a", "address", Required = false, HelpText = "The server's address. Default: localhost")]
-        public string Address = "localhost";
+        public string Address = "127.0.0.1";
 
         [Option("e", "export", HelpText = "Specify where you want to export the site. When the export path is specified the server will not serve pages")]
         public string ExportPath;
