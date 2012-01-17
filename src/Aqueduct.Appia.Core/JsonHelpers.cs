@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Aqueduct.Appia.Core
 {
@@ -12,9 +13,9 @@ namespace Aqueduct.Appia.Core
         {
             if (string.IsNullOrEmpty(json))
                 return null;
-
-            JavaScriptSerializer ser = new JavaScriptSerializer();
-            var dictionary = ser.Deserialize<IDictionary<string, object>>(json);
+			          
+				
+            var dictionary = JsonConvert.DeserializeObject<IDictionary<string, object>>(json);
             return ExpandoHelper.DictionaryToExpando(dictionary);
         }
     }
