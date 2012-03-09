@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0B3EA40E-F7D8-4E14-A30F-1536F41B62D1}</ProjectGuid>
@@ -52,30 +52,25 @@
   <PropertyGroup>
     <StartupObject>Aqueduct.Appia.Host.Program</StartupObject>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine">
+      <HintPath>..\..\dependencies\CommandLine\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="HttpServer">
+      <HintPath>..\..\dependencies\HttpServer\HttpServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\dependencies\razor\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="CommandLine, Version=1.8.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\dependencies\CommandLine\CommandLine.dll</HintPath>
-    </Reference>
-    <Reference Include="HttpServer, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5684c2c737cd4271">
-      <HintPath>..\..\dependencies\HttpServer\HttpServer.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\dependencies\razor\System.Web.Razor.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
